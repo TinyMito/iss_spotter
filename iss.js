@@ -54,4 +54,28 @@ const fetchCoordsByIP = function(ip, callback) {
 
 };
 
-module.exports = { fetchMyIP, fetchCoordsByIP };
+const fetchISSFlyOverTimes = function(coords, callback) {
+  const latitude = coords.latitude;
+  const longitude = coords.longitude;
+  request(`https://iss-flyover.herokuapp.com/json/?lat=${latitude}&lon=${longitude}`, (error, response, body) => {
+    const success = JSON.parse(body).message;
+    if (success !== 'success') {
+      // Check if the coord request is a failure
+      callback(`Fail to get data for ${latitude}, ${longitude}.`, null);
+      return;
+    }
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    if (response.statusCode !== 200) {
+      const msg = `Status Code ${response.statusCode} when fetching IP. Response: ${body}`;
+      callback(Error(msg), null);
+      return;
+    }
+    const rise = JSON.parse(body).response;
+    callback(null, rise);
+  });
+};
+
+module.exports = { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes };
