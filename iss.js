@@ -34,7 +34,7 @@ const fetchCoordsByIP = function(ip, callback) {
 
     if (!success) {
       // Check if the coord request is a failure
-      callback(message, null);
+      callback(`${message} for ${ip}`, null);
       return;
     }
     if (error) {
@@ -50,8 +50,8 @@ const fetchCoordsByIP = function(ip, callback) {
     coordinates.latitude = JSON.parse(body).latitude.toString();
     coordinates.longitude = JSON.parse(body).longitude.toString();
     return callback(null, coordinates);
-  })
-  
-}
+  });
+
+};
 
 module.exports = { fetchMyIP, fetchCoordsByIP };
