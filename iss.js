@@ -1,16 +1,8 @@
-/**
- * Makes a single API request to retrieve the user's IP address.
- * Input:
- *   - A callback (to pass back an error or the IP string)
- * Returns (via Callback):
- *   - An error, if any (nullable)
- *   - The IP address as a string (null if error). Example: "162.245.144.188"
- */
 const request = require('request');
 
-const nextISSTimesForMyLocation = function (callback) {
+const nextISSTimesForMyLocation = function(callback) {
   // Get Location IP Address
-  const fetchMyIP = function (callback) {
+  const fetchMyIP = function(callback) {
     // use request to fetch IP address from JSON API
     request('https://api.ipify.org/?format=json', (error, response, body) => {
 
@@ -30,7 +22,7 @@ const nextISSTimesForMyLocation = function (callback) {
   };
 
   // Get Coordinates
-  const fetchCoordsByIP = function (ip, callback) {
+  const fetchCoordsByIP = function(ip, callback) {
     request(`http://ipwho.is/${ip}`, (error, response, body) => {
       const success = JSON.parse(body).success;
       const message = JSON.parse(body).message;
@@ -58,7 +50,7 @@ const nextISSTimesForMyLocation = function (callback) {
   };
 
   // Get ISS Fly Over Data
-  const fetchISSFlyOverTimes = function (coords, callback) {
+  const fetchISSFlyOverTimes = function(coords, callback) {
     const latitude = coords.latitude;
     const longitude = coords.longitude;
     request(`https://iss-flyover.herokuapp.com/json/?lat=${latitude}&lon=${longitude}`, (error, response, body) => {
@@ -88,7 +80,6 @@ const nextISSTimesForMyLocation = function (callback) {
       console.log("It didn't work!", error);
       return;
     }
-    //console.log('It worked! Returned IP:', ip);
   
     // Call for coordinates
     fetchCoordsByIP(ip, (error, coords) => {
@@ -96,7 +87,6 @@ const nextISSTimesForMyLocation = function (callback) {
         console.log("Error fetching coordinates:", error);
         return;
       }
-      //console.log("Retrieved coordinates:", coords);
   
       // Call for fly over times
       fetchISSFlyOverTimes(coords, (error, rise) => {
@@ -110,6 +100,6 @@ const nextISSTimesForMyLocation = function (callback) {
       });
     });
   });
-}
+};
 
 module.exports = { nextISSTimesForMyLocation };
