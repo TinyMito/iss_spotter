@@ -27,4 +27,31 @@ const fetchMyIP = function(callback) {
   });
 };
 
-module.exports = { fetchMyIP };
+const fetchCoordsByIP = function(ip, callback) {
+  request(`http://ipwho.is/${ip}`, (error, response, body) => {
+    const success = JSON.parse(body).success;
+    const message = JSON.parse(body).message;
+
+    if (!success) {
+      // Check if the coord request is a failure
+      callback(message, null);
+      return;
+    }
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    if (response.statusCode !== 200) {
+      const msg = `Status Code ${response.statusCode} when fetching IP. Response: ${body}`;
+      callback(Error(msg), null);
+      return;
+    }
+    let coordinates = {};
+    coordinates.latitude = JSON.parse(body).latitude.toString();
+    coordinates.longitude = JSON.parse(body).longitude.toString();
+    return callback(null, coordinates);
+  })
+  
+}
+
+module.exports = { fetchMyIP, fetchCoordsByIP };
